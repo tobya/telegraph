@@ -1,5 +1,5 @@
 {
-    "name": "defstudio/telegraph",
+    "name": "tobya/telegraph",
     "description": "A laravel facade to interact with Telegram Bots",
     "keywords": [
         "defstudio",
