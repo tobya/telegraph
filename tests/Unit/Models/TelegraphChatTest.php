@@ -15,7 +15,6 @@ use DefStudio\Telegraph\Support\Testing\Fakes\TelegraphPollFake;
 use DefStudio\Telegraph\Support\Testing\Fakes\TelegraphQuizFake;
 use DefStudio\Telegraph\Support\Testing\Fakes\TelegraphSetChatMenuButtonFake;
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Str;
 
 test('name is set to ID if missing', function () {
@@ -291,6 +290,42 @@ it('can send an audio from file_id', function () {
     ]);
 });
 
+it('can send a sticker', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->sticker(Storage::path('sticker.tgs'))->send();
+
+    Telegraph::assertSentFiles(\DefStudio\Telegraph\Telegraph::ENDPOINT_SEND_STICKER, [
+        'sticker' => new Attachment(Storage::path('sticker.tgs'), 'sticker.tgs'),
+    ]);
+});
+
+it('can send a sticker from remote url', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->sticker('https://test.dev/sticker.tgs')->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_SEND_STICKER, [
+        'sticker' => 'https://test.dev/sticker.tgs',
+    ]);
+});
+
+it('can send a sticker from file_id', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $uuid = Str::uuid();
+
+    $chat->sticker($uuid)->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_SEND_STICKER, [
+        'sticker' => $uuid,
+    ]);
+});
+
+
 it('can send a voice', function () {
     Telegraph::fake();
     $chat = make_chat();
@@ -434,6 +469,51 @@ it('can unpin all messages', function () {
     $chat->unpinAllMessages()->send();
 
     Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_UNPIN_ALL_MESSAGES);
+});
+
+it('can create a forum topic', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->createForumTopic('test name', 7322096, 'emoji_id')->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_CREATE_FORUM_TOPIC);
+});
+
+it('can edit a forum topic', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->editForumTopic(123456, 'new test name', 'emoji_id')->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_EDIT_FORUM_TOPIC);
+});
+
+it('can close a forum topic', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->closeForumTopic(123456)->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_CLOSE_FORUM_TOPIC);
+});
+
+it('can reopen a forum topic', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->reopenForumTopic(7322096)->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_REOPEN_FORUM_TOPIC);
+});
+
+it('can delete a forum topic', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->deleteForumTopic(7322096)->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_DELETE_FORUM_TOPIC);
 });
 
 it('can delete a chat photo', function () {
@@ -748,4 +828,79 @@ it('can edit Telegraph data after sending a media ', function () {
         'video' => 'test.url',
         'caption' => 'test',
     ]);
+});
+
+it('can send a mediaGroup from remote url', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->mediaGroup([
+        [
+            'type' => 'photo',
+            'media' => 'https://test.dev/photo.jpg',
+        ],
+        [
+            'type' => 'photo',
+            'media' => 'https://test.dev/photo.jpg',
+        ],
+    ])->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_SEND_MEDIA_GROUP, [
+        'media' => [
+            [
+                'type' => 'photo',
+                'media' => 'https://test.dev/photo.jpg',
+            ],
+            [
+                'type' => 'photo',
+                'media' => 'https://test.dev/photo.jpg',
+            ],
+        ],
+    ]);
+});
+
+it('can send a message to a specific Thread after', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->message('foo')->inThread(5)->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_MESSAGE, [
+        'text' => 'foo',
+        'message_thread_id' => 5,
+    ]);
+});
+
+it('can send a message to a specific Thread before', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->inThread(5)->message('foo')->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_MESSAGE, [
+        'text' => 'foo',
+        'message_thread_id' => 5,
+    ]);
+});
+
+it('can accept chat join request', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->approveJoinRequest(123456)->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_APPROVE_CHAT_JOIN_REQUEST, [
+        'user_id' => 123456,
+    ], false);
+});
+
+it('can decline chat join request', function () {
+    Telegraph::fake();
+    $chat = make_chat();
+
+    $chat->declineJoinRequest(123456)->send();
+
+    Telegraph::assertSentData(\DefStudio\Telegraph\Telegraph::ENDPOINT_DECLINE_CHAT_JOIN_REQUEST, [
+        'user_id' => 123456,
+    ], false);
 });

@@ -5,6 +5,9 @@ namespace DefStudio\Telegraph\DTO;
 use DefStudio\Telegraph\Contracts\Downloadable;
 use Illuminate\Contracts\Support\Arrayable;
 
+/**
+ * @implements Arrayable<string, string|int|array<string, mixed>>
+ */
 class Video implements Arrayable, Downloadable
 {
     private string $id;
@@ -87,6 +90,11 @@ class Video implements Arrayable, Downloadable
     public function filesize(): ?int
     {
         return $this->filesize;
+    }
+
+    public function thumbnail(): ?Photo
+    {
+        return $this->thumbnail;
     }
 
     public function toArray(): array

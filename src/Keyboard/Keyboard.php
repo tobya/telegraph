@@ -6,9 +6,15 @@ use DefStudio\Telegraph\Proxies\KeyboardButtonProxy;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Conditionable;
 
+/**
+ * @implements Arrayable<string, array<array-key, array{text: string, url?: string, callback_data?: string, web_app?:  string[], login_url?:  string[], switch_inline_query?: string, switch_inline_query_current_chat?: string}>>
+ */
 class Keyboard implements Arrayable
 {
+    use Conditionable;
+
     /** @var Collection<array-key, Button> */
     protected Collection $buttons;
 
@@ -23,18 +29,6 @@ class Keyboard implements Arrayable
     public static function make(): Keyboard
     {
         return new self();
-    }
-
-    /**
-     * @param callable(Keyboard $keyboard): Keyboard $callback
-     */
-    public function when(bool $condition, callable $callback): Keyboard
-    {
-        if ($condition) {
-            return $callback($this);
-        }
-
-        return $this;
     }
 
     public function rightToLeft(bool $condition = true): Keyboard

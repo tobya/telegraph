@@ -47,15 +47,35 @@ return [
          * If enabled, unknown webhook commands are
          * reported as exception in application logs
          */
-        'report_unknown_commands' => true,
+        'report_unknown_commands' => env('TELEGRAPH_REPORT_UNKNOWN_COMMANDS', true),
+
+        /**
+         * secret token to be sent in a X-Telegram-Bot-Api-Secret-Token header
+         * to verify the authenticity of the webhook
+         */
+        'secret' => env('TELEGRAPH_WEBHOOK_SECRET'),
+
+        /**
+         * maximum allowed simultaneous connections to the webhook (defaults to 40)
+         */
+        'max_connections' => env('TELEGRAPH_WEBHOOK_MAX_CONNECTIONS', 40),
 
         /*
          * If enabled, Telegraph dumps received
          * webhook messages to logs
          */
-        'debug' => false,
+        'debug' => env('TELEGRAPH_WEBHOOK_DEBUG', false),
     ],
 
+    /*
+     * Sets HTTP request timeout when interacting with Telegram servers
+     */
+    'http_timeout' => env('TELEGRAPH_HTTP_TIMEOUT', 30),
+
+    /*
+     * Sets HTTP connection request timeout when interacting with Telegram servers
+     */
+    'http_connection_timeout' => env('TELEGRAPH_HTTP_CONNECTION_TIMEOUT', 10),
 
     'security' => [
         /*
@@ -161,5 +181,20 @@ return [
         'document' => [
             'max_size_mb' => 50,
         ],
+        'sticker' => [
+            'max_size_mb' => 50,
+        ],
+    ],
+
+    /*
+     * Sets preferences for commands
+     */
+    'commands' => [
+        /*
+         * Defines a list of characters that are the identifier of a command sent to the chat.
+         *
+         * Default is `/`
+         */
+        'start_with' => ['/'],
     ],
 ];

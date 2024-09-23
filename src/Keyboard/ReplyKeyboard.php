@@ -7,13 +7,20 @@ namespace DefStudio\Telegraph\Keyboard;
 use DefStudio\Telegraph\Proxies\ReplyKeyboardButtonProxy;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Traits\Conditionable;
 
+/**
+ * @implements Arrayable<string, array<array-key, array{text: string, request_contact?: bool, request_location?: bool, request_poll?: string[], web_app?: string[]}>>
+ */
 class ReplyKeyboard implements Arrayable
 {
+    use Conditionable;
+
     /** @var Collection<array-key, ReplyButton> */
     protected Collection $buttons;
 
     protected bool $rtl = false;
+    protected bool $persistent = false;
     protected bool $resize = false;
     protected bool $oneTime = false;
     protected bool $selective = false;
@@ -21,25 +28,13 @@ class ReplyKeyboard implements Arrayable
 
     public function __construct()
     {
-        /* @phpstan-ignore-next-line  */
+        /* @phpstan-ignore-next-line */
         $this->buttons = collect();
     }
 
     public static function make(): self
     {
         return new self();
-    }
-
-    /**
-     * @param callable(ReplyKeyboard $keyboard): ReplyKeyboard $callback
-     */
-    public function when(bool $condition, callable $callback): self
-    {
-        if ($condition) {
-            return $callback($this);
-        }
-
-        return $this;
     }
 
     public function rightToLeft(bool $condition = true): self
@@ -103,6 +98,15 @@ class ReplyKeyboard implements Arrayable
         }
 
         return $keyboard;
+    }
+
+    public function persistent(bool $isPersistent = true): self
+    {
+        $clone = $this->clone();
+
+        $clone->persistent = $isPersistent;
+
+        return $clone;
     }
 
     public function resize(bool $resize = true): self
@@ -215,7 +219,7 @@ class ReplyKeyboard implements Arrayable
     {
         $clone = $this->clone();
 
-        /* @phpstan-ignore-next-line  */
+        /* @phpstan-ignore-next-line */
         $clone->buttons = $clone->buttons->reject(fn (ReplyButton $button) => $button->label() == $label);
 
         return $clone;
@@ -282,10 +286,11 @@ class ReplyKeyboard implements Arrayable
     public function options(): array
     {
         return array_filter([
-             'resize_keyboard' => $this->resize,
-             'one_time_keyboard' => $this->oneTime,
-             'selective' => $this->selective,
-             'input_field_placeholder' => $this->inputPlaceholder,
-         ]);
+            'is_persistent' => $this->persistent,
+            'resize_keyboard' => $this->resize,
+            'one_time_keyboard' => $this->oneTime,
+            'selective' => $this->selective,
+            'input_field_placeholder' => $this->inputPlaceholder,
+        ]);
     }
 }

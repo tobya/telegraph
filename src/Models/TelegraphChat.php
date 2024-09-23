@@ -43,12 +43,15 @@ class TelegraphChat extends Model implements Storable
         'name',
     ];
 
+    /**
+     * @return TelegraphChatFactory
+     */
     protected static function newFactory(): Factory
     {
         return TelegraphChatFactory::new();
     }
 
-    public static function booted()
+    public static function booted(): void
     {
         self::created(function (TelegraphChat $chat) {
             if (empty($chat->name)) {
@@ -63,6 +66,9 @@ class TelegraphChat extends Model implements Storable
         return $this->id;
     }
 
+    /**
+     * @return BelongsTo<TelegraphBot, TelegraphChat>
+     */
     public function bot(): BelongsTo
     {
         /** @phpstan-ignore-next-line */
@@ -115,6 +121,11 @@ class TelegraphChat extends Model implements Storable
     public function withData(string $key, mixed $value): Telegraph
     {
         return TelegraphFacade::chat($this)->withData($key, $value);
+    }
+
+    public function inThread(int $thread_id): Telegraph
+    {
+        return TelegraphFacade::chat($this)->inThread($thread_id);
     }
 
     public function message(string $message): Telegraph
@@ -221,6 +232,19 @@ class TelegraphChat extends Model implements Storable
     public function photo(string $path, string $filename = null): Telegraph
     {
         return TelegraphFacade::chat($this)->photo($path, $filename);
+    }
+
+    /**
+     * @param array<int|string, array<mixed>> $media
+     */
+    public function mediaGroup(array $media): Telegraph
+    {
+        return TelegraphFacade::chat($this)->mediaGroup($media);
+    }
+
+    public function sticker(string $path, string $filename = null): Telegraph
+    {
+        return TelegraphFacade::chat($this)->sticker($path, $filename);
     }
 
     public function animation(string $path, string $filename = null): Telegraph
@@ -332,6 +356,16 @@ class TelegraphChat extends Model implements Storable
         return TelegraphFacade::chat($this)->demoteChatMember($userId);
     }
 
+    public function approveJoinRequest(string $userId): Telegraph
+    {
+        return TelegraphFacade::chat($this)->approveChatJoinRequest($userId);
+    }
+
+    public function declineJoinRequest(string $userId): Telegraph
+    {
+        return TelegraphFacade::chat($this)->declineChatJoinRequest($userId);
+    }
+
     public function poll(string $question): TelegraphPollPayload
     {
         return TelegraphFacade::chat($this)->poll($question);
@@ -360,6 +394,31 @@ class TelegraphChat extends Model implements Storable
     public function setMenuButton(): SetChatMenuButtonPayload
     {
         return TelegraphFacade::chat($this)->setChatMenuButton();
+    }
+
+    public function createForumTopic(string $name, int $iconColor = null, string $iconCustomEmojiId = null): Telegraph
+    {
+        return TelegraphFacade::chat($this)->createForumTopic($name, $iconColor, $iconCustomEmojiId);
+    }
+
+    public function editForumTopic(int $threadId = null, string $name = null, string $iconCustomEmojiId = null): Telegraph
+    {
+        return TelegraphFacade::chat($this)->editForumTopic($threadId, $name, $iconCustomEmojiId);
+    }
+
+    public function closeForumTopic(int $threadId = null): Telegraph
+    {
+        return TelegraphFacade::chat($this)->closeForumTopic($threadId);
+    }
+
+    public function reopenForumTopic(int $threadId = null): Telegraph
+    {
+        return TelegraphFacade::chat($this)->reopenForumTopic($threadId);
+    }
+
+    public function deleteForumTopic(int $threadId = null): Telegraph
+    {
+        return TelegraphFacade::chat($this)->deleteForumTopic($threadId);
     }
 
     public function copyMessage(TelegraphChat|int $fromChat, int $messageId): Telegraph

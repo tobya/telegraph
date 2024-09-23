@@ -23,6 +23,7 @@ use DefStudio\Telegraph\Concerns\StoresFiles;
 use DefStudio\Telegraph\DTO\Attachment;
 use Illuminate\Foundation\Bus\PendingDispatch;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Traits\Conditionable;
 
 class Telegraph
 {
@@ -38,6 +39,7 @@ class Telegraph
     use CreatesScopedPayloads;
     use InteractWithUsers;
     use InteractsWithCommands;
+    use Conditionable;
 
 
     public const PARSE_HTML = 'html';
@@ -69,6 +71,7 @@ class Telegraph
     public const ENDPOINT_SEND_LOCATION = 'sendLocation';
     public const ENDPOINT_SEND_ANIMATION = 'sendAnimation';
     public const ENDPOINT_SEND_VOICE = 'sendVoice';
+    public const ENDPOINT_SEND_MEDIA_GROUP = 'sendMediaGroup';
     public const ENDPOINT_SEND_CHAT_ACTION = 'sendChatAction';
     public const ENDPOINT_SEND_DOCUMENT = 'sendDocument';
     public const ENDPOINT_SEND_PHOTO = 'sendPhoto';
@@ -83,12 +86,18 @@ class Telegraph
     public const ENDPOINT_DELETE_CHAT_PHOTO = 'deleteChatPhoto';
     public const ENDPOINT_EXPORT_CHAT_INVITE_LINK = 'exportChatInviteLink';
     public const ENDPOINT_CREATE_CHAT_INVITE_LINK = 'createChatInviteLink';
+    public const ENDPOINT_CREATE_FORUM_TOPIC = 'createForumTopic';
+    public const ENDPOINT_EDIT_FORUM_TOPIC = 'editForumTopic';
+    public const ENDPOINT_CLOSE_FORUM_TOPIC = 'closeForumTopic';
+    public const ENDPOINT_REOPEN_FORUM_TOPIC = 'reopenForumTopic';
+    public const ENDPOINT_DELETE_FORUM_TOPIC = 'deleteForumTopic';
     public const ENDPOINT_EDIT_CHAT_INVITE_LINK = 'editChatInviteLink';
     public const ENDPOINT_REVOKE_CHAT_INVITE_LINK = 'revokeChatInviteLink';
     public const ENDPOINT_LEAVE_CHAT = 'leaveChat';
     public const ENDPOINT_GET_CHAT_INFO = 'getChat';
     public const ENDPOINT_GET_CHAT_MEMBER_COUNT = 'getChatMemberCount';
     public const ENDPOINT_GET_CHAT_MEMBER = 'getChatMember';
+    public const ENDPOINT_GET_CHAT_ADMINISTRATORS = 'getChatAdministrators';
     public const ENDPOINT_SET_CHAT_PERMISSIONS = 'setChatPermissions';
     public const ENDPOINT_BAN_CHAT_MEMBER = 'banChatMember';
     public const ENDPOINT_UNBAN_CHAT_MEMBER = 'unbanChatMember';
@@ -101,6 +110,9 @@ class Telegraph
     public const ENDPOINT_SET_CHAT_MENU_BUTTON = 'setChatMenuButton';
     public const ENDPOINT_GET_CHAT_MENU_BUTTON = 'getChatMenuButton';
     public const ENDPOINT_DICE = 'sendDice';
+    public const ENDPOINT_SEND_STICKER = 'sendSticker';
+    public const ENDPOINT_APPROVE_CHAT_JOIN_REQUEST = 'approveChatJoinRequest';
+    public const ENDPOINT_DECLINE_CHAT_JOIN_REQUEST = 'declineChatJoinRequest';
 
 
     /** @var array<string, mixed> */
@@ -112,18 +124,6 @@ class Telegraph
     public function __construct()
     {
         $this->files = Collection::empty();
-    }
-
-    /**
-     * @param callable(Telegraph $keyboard): Telegraph $callback
-     */
-    public function when(bool $condition, callable $callback): Telegraph
-    {
-        if ($condition) {
-            return $callback($this);
-        }
-
-        return $this;
     }
 
     public function send(): TelegraphResponse
@@ -158,6 +158,15 @@ class Telegraph
         $telegraph = clone $this;
 
         data_set($telegraph->data, $key, $value);
+
+        return $telegraph;
+    }
+
+    public function inThread(int $thread_id): static
+    {
+        $telegraph = clone $this;
+
+        data_set($telegraph->data, 'message_thread_id', $thread_id);
 
         return $telegraph;
     }

@@ -181,7 +181,7 @@ trait SendsAttachments
         $telegraph = clone $this;
 
         if (File::exists($path)) {
-            /* @phpstan-ignore-next-line  */
+            /* @phpstan-ignore-next-line */
             $maxSizeKb = floatval(config('telegraph.attachments.thumbnail.max_size_kb', 200));
 
             if (($size = $telegraph->fileSizeInKb($path)) > $maxSizeKb) {
@@ -236,6 +236,22 @@ trait SendsAttachments
         return $telegraph;
     }
 
+    /**
+     * @param array<int|string, array<mixed>> $mediaInputs
+     */
+    public function mediaGroup(array $mediaInputs): self
+    {
+        $telegraph = clone $this;
+
+        $telegraph->endpoint = self::ENDPOINT_SEND_MEDIA_GROUP;
+
+        $telegraph->data['chat_id'] = $telegraph->getChatId();
+
+        $telegraph->data['media'] = $mediaInputs;
+
+        return $telegraph;
+    }
+
     private function imageHeight(string $path): int
     {
         return $this->imageDimensions($path)[1];
@@ -285,6 +301,18 @@ trait SendsAttachments
         if ($emoji !== null) {
             $telegraph->data['emoji'] = $emoji;
         }
+
+        return $telegraph;
+    }
+
+    public function sticker(string $path, string $filename = null): self
+    {
+        $telegraph = clone $this;
+
+        $telegraph->endpoint = self::ENDPOINT_SEND_STICKER;
+        $telegraph->data['chat_id'] = $telegraph->getChatId();
+
+        $this->attachSticker($telegraph, $path, $filename);
 
         return $telegraph;
     }
@@ -374,7 +402,7 @@ trait SendsAttachments
     protected function attachAudio(self $telegraph, string $path, ?string $filename): void
     {
         if (File::exists($path)) {
-            /* @phpstan-ignore-next-line  */
+            /* @phpstan-ignore-next-line */
             $maxSizeMb = floatval(config('telegraph.attachments.audio.max_size_mb', 50));
 
             if (($size = $telegraph->fileSizeInMb($path)) > $maxSizeMb) {
@@ -398,8 +426,7 @@ trait SendsAttachments
     protected function attachDocument(self $telegraph, string $path, ?string $filename): void
     {
         if (File::exists($path)) {
-
-            /* @phpstan-ignore-next-line  */
+            /* @phpstan-ignore-next-line */
             $maxSizeMb = floatval(config('telegraph.attachments.document.max_size_mb', 50));
 
             if (($size = $telegraph->fileSizeInMb($path)) > $maxSizeMb) {
@@ -410,6 +437,23 @@ trait SendsAttachments
         } else {
             $telegraph->data['document'] = $path;
             $telegraph->data['caption'] ??= '';
+        }
+    }
+
+    protected function attachSticker(self $telegraph, string $path, ?string $filename): void
+    {
+        if (File::exists($path)) {
+            /* @phpstan-ignore-next-line  */
+            $maxSizeMb = floatval(config('telegraph.attachments.sticker.max_size_mb', 50));
+
+            if (($size = $telegraph->fileSizeInMb($path)) > $maxSizeMb) {
+                throw FileException::documentSizeExceeded($size, $maxSizeMb);
+            }
+
+            $telegraph->files->put('sticker', new Attachment($path, $filename));
+        } else {
+            $telegraph->data['sticker'] = $path;
+            $telegraph->data['emoji'] ??= '';
         }
     }
 }

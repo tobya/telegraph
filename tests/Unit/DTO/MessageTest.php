@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 it('export all properties to array', function () {
     $dto = Message::fromArray([
         'message_id' => 2,
+        'message_thread_id' => 123456,
         'date' => now()->timestamp,
         'edit_date' => now()->timestamp,
         'text' => 'f',
@@ -20,6 +21,7 @@ it('export all properties to array', function () {
             'last_name' => 'b',
             'username' => 'c',
             'language_code' => 'd',
+            'is_premium' => false,
         ],
         'forward_from' => [
             'id' => 1,
@@ -134,6 +136,22 @@ it('export all properties to array', function () {
                 'mime_type' => 'audio/mp3',
                 'file_size' => 42,
             ],
+            'sticker' => [
+                'file_id' => 31,
+                'width' => 1024,
+                'height' => 768,
+                'type' => 'regular',
+                'is_animated' => false,
+                'is_video' => false,
+                'emoji' => 'test',
+                'file_size' => 42,
+                'thumb' => [
+                    'file_id' => 99,
+                    'width' => 1024,
+                    'height' => 768,
+                    'file_size' => 42,
+                ],
+            ],
             'location' => [
                 'latitude' => 12456789,
                 'longitude' => 98765431,
@@ -217,6 +235,22 @@ it('export all properties to array', function () {
             'mime_type' => 'audio/mp3',
             'file_size' => 42,
         ],
+        'sticker' => [
+            'file_id' => 31,
+            'width' => 1024,
+            'height' => 768,
+            'type' => 'regular',
+            'is_animated' => false,
+            'is_video' => false,
+            'emoji' => 'test',
+            'file_size' => 42,
+            'thumb' => [
+                'file_id' => 99,
+                'width' => 1024,
+                'height' => 768,
+                'file_size' => 42,
+            ],
+        ],
         'location' => [
             'latitude' => 12456789,
             'longitude' => 98765431,
@@ -249,6 +283,11 @@ it('export all properties to array', function () {
         'web_app_data' => [
             "button" => "CustomButton",
             "data" => "Data",
+        ],
+        'write_access_allowed' => [
+            "from_request" => true,
+            "web_app_name" => "test",
+            "from_attachment_menu" => true,
         ],
     ]);
 

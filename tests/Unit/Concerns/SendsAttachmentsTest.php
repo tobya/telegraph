@@ -33,6 +33,18 @@ it('can send a dice with different emojis', function (string $emoji) {
     'SLOT_MACHINE' => Emojis::SLOT_MACHINE,
 ]);
 
+it('can send a sticker with own .tgs file', function () {
+    expect(fn (Telegraph $telegraph) => $telegraph->sticker(Storage::path('sticker.tgs')))
+        ->toMatchUtf8TelegramSnapshot();
+});
+
+it('can send a sticker with telegram sticker set file_id', function (string $file_id) {
+    expect(fn (Telegraph $telegraph) => $telegraph->sticker($file_id))
+        ->toMatchUtf8TelegramSnapshot();
+})->with([
+    'hourglass' => 'CAACAgEAAxkBAAEr3Y1mZFR5Gf4X5m0CLLNUbpzwuPhcFQACLQIAAqcjIUQ9QDDJ7YO0tjUE',
+]);
+
 it('requires a chat to send a document', function () {
     TelegraphFacade::document(Storage::path('test.txt'));
 })->throws(TelegraphException::class, 'No TelegraphChat defined for this request');
@@ -85,7 +97,6 @@ it('can attach a keyboard to a document', function () {
 });
 
 test('documents are validated', function (string $path, bool $valid, string $exceptionClass = null, string $exceptionMessage = null, array $customConfigs = []) {
-
     foreach ($customConfigs as $key => $value) {
         Config::set($key, $value);
     }
@@ -337,7 +348,6 @@ it('can attach a keyboard to a photo', function () {
 });
 
 test('photos are validated', function (string $path, bool $valid, string $exceptionClass = null, string $exceptionMessage = null, array $customConfigs = []) {
-
     foreach ($customConfigs as $key => $value) {
         Config::set($key, $value);
     }

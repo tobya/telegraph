@@ -2,6 +2,150 @@
 
 All notable changes to `telegraph` will be documented in this file.
 
+## v1.53.0 - 2024-09-16
+
+### What's Changed
+
+* #635 implement config for connection request timeout by @MarioGattolla in https://github.com/defstudio/telegraph/pull/636
+* Added the ability to specify different prefixes for command definitions by @andrey-helldar in https://github.com/defstudio/telegraph/pull/643
+* Make protected methods by @andrey-helldar in https://github.com/defstudio/telegraph/pull/642
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.52.0...v1.53.0
+
+## v1.52.0 - 2024-08-27
+
+### What's Changed
+
+* [feat] add settings to registerWebhook method by @fabio-ivona and @MarcusLestrange  in https://github.com/defstudio/telegraph/pull/634
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.51.0...v1.52.0
+
+## v1.51.0 - 2024-08-26
+
+### What's Changed
+
+* [feat] forum methods by @YSRoot in https://github.com/defstudio/telegraph/pull/616
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.50.0...v1.51.0
+
+## v1.50.0 - 2024-08-26
+
+### What's Changed
+
+* [fix] UserDTO by @ah-rahimi in https://github.com/defstudio/telegraph/pull/619
+* [fix] exceptions in onFailure method by @fabio-ivona in https://github.com/defstudio/telegraph/pull/626
+* [feat] add is_persistent field in ReplyKeyboard by @ArtemYurov in https://github.com/defstudio/telegraph/pull/618
+* [feat] chatAdministrators call by @ivankuraev in https://github.com/defstudio/telegraph/pull/617
+* [feat] chat join request management by @HFUBlackRabbit in https://github.com/defstudio/telegraph/pull/615
+
+### New Contributors
+
+* @ArtemYurov made their first contribution in https://github.com/defstudio/telegraph/pull/618
+* @HFUBlackRabbit made their first contribution in https://github.com/defstudio/telegraph/pull/615
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.49.4...v1.50.0
+
+## v1.49.4 - 2024-07-19
+
+### What's Changed
+
+* Fix UserDTO by @ah-rahimi in https://github.com/defstudio/telegraph/pull/608
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.49.3...v1.49.4
+
+## v1.49.3 - 2024-07-16
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.49.2...v1.49.3
+
+## v1.49.2 - 2024-07-16
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.49.1...v1.49.2
+
+## v1.49.1 - 2024-07-16
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.49.0...v1.49.1
+
+## v1.49.0 - 2024-07-15
+
+### What's Changed
+
+* [feat] write access allowed field by @ah-rahimi in https://github.com/defstudio/telegraph/pull/605
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.48.1...v1.49.0
+
+## v1.48.1 - 2024-07-06
+
+### What's Changed
+
+* #602 implemented Sticker DTO by @MarioGattolla in https://github.com/defstudio/telegraph/pull/603
+* Implements sendSticker method by @ivankuraev in https://github.com/defstudio/telegraph/pull/598
+
+### New Contributors
+
+* @ivankuraev made their first contribution in https://github.com/defstudio/telegraph/pull/598
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.48.0...v1.48.1
+
+## v1.48.0 - 2024-06-28
+
+### What's Changed
+
+* #386-implemented-thread-method by @MarioGattolla in https://github.com/defstudio/telegraph/pull/600
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.47.0...v1.48.0
+
+## v1.47.0 - 2024-06-26
+
+### What's Changed
+
+* #498 implement sendMediaGroup method by @MarioGattolla in https://github.com/defstudio/telegraph/pull/599
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.46.6...v1.47.0
+
+## v1.46.6 - 2024-06-07
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.46.5...v1.46.6
+
+## v1.46.5 - 2024-06-07
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.46.4...v1.46.5
+
+## v1.46.4 - 2024-06-07
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.46.3...v1.46.4
+
+## v1.46.3 - 2024-06-07
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.46.2...v1.46.3
+
+## v1.46.2 - 2024-06-07
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.45.2...v1.46.2
+
+## v1.45.2 - 2024-06-07
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.45.1...v1.45.2
+
+## v1.45.1 - 2024-05-31
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.45.0...v1.45.1
+
+## v1.45.0 - 2024-05-31
+
+### What's Changed
+
+* #586 fix documentation error by @MarioGattolla in https://github.com/defstudio/telegraph/pull/596
+* #591 implemented HTTP request timeout config value by @MarioGattolla in https://github.com/defstudio/telegraph/pull/595
+* feat: replace when functions with Laravel Conditionable by @ah-rahimi in https://github.com/defstudio/telegraph/pull/594
+* feat: add isPremium to DTO User by @ah-rahimi in https://github.com/defstudio/telegraph/pull/593
+* [fix] message not set up before retrieving Chat by @tobya in https://github.com/defstudio/telegraph/pull/584
+
+### New Contributors
+
+* @tobya made their first contribution in https://github.com/defstudio/telegraph/pull/584
+
+**Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.44.4...v1.45.0
+
 ## v1.44.4 - 2024-04-26
 
 **Full Changelog**: https://github.com/defstudio/telegraph/compare/v1.44.3...v1.44.4

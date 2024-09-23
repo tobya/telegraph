@@ -7,7 +7,6 @@ use DefStudio\Telegraph\Exceptions\TelegramUpdatesException;
 use DefStudio\Telegraph\Facades\Telegraph;
 use DefStudio\Telegraph\Facades\Telegraph as Facade;
 use DefStudio\Telegraph\Keyboard\Keyboard;
-
 use DefStudio\Telegraph\Models\TelegraphBot;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Str;
@@ -45,6 +44,45 @@ it('can register its webhook', function () {
     $bot->registerWebhook()->send();
 
     Telegraph::assertRegisteredWebhook();
+});
+
+it('can register its webhook dropping pending updates', function () {
+    withfakeUrl();
+
+    Telegraph::fake();
+    $bot = make_bot();
+
+    $bot->registerWebhook(dropPendingUpdates: true)->send();
+
+    Telegraph::assertRegisteredWebhook([
+        'drop_pending_updates' => true,
+    ], false);
+});
+
+it('can register its webhook settings its max connections', function () {
+    withfakeUrl();
+
+    Telegraph::fake();
+    $bot = make_bot();
+
+    $bot->registerWebhook(maxConnections: 34)->send();
+
+    Telegraph::assertRegisteredWebhook([
+        'max_connections' => 34,
+    ], false);
+});
+
+it('can register its webhook settings its secret token', function () {
+    withfakeUrl();
+
+    Telegraph::fake();
+    $bot = make_bot();
+
+    $bot->registerWebhook(secretToken: 'bar')->send();
+
+    Telegraph::assertRegisteredWebhook([
+        'secret_token' => 'bar',
+    ], false);
 });
 
 it('can unregister its webhook', function () {

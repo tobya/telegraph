@@ -39,6 +39,9 @@ abstract class WebhookHandler
     protected Message|null $message = null;
     protected CallbackQuery|null $callbackQuery = null;
 
+    /**
+     * @var Collection<string, string>
+     */
     protected Collection $data;
 
     protected Keyboard $originalKeyboard;
@@ -48,7 +51,7 @@ abstract class WebhookHandler
         $this->originalKeyboard = Keyboard::make();
     }
 
-    private function handleCallbackQuery(): void
+    protected function handleCallbackQuery(): void
     {
         $this->extractCallbackQueryData();
 
@@ -70,10 +73,9 @@ abstract class WebhookHandler
         App::call([$this, $action], $this->data->toArray());
     }
 
-    private function handleCommand(Stringable $text): void
+    protected function handleCommand(Stringable $text): void
     {
-        $command = (string) $text->after('/')->before(' ')->before('@');
-        $parameter = (string) $text->after('@')->after(' ');
+        [$command, $parameter] = $this->parseCommand($text);
 
         if (!$this->canHandle($command)) {
             $this->handleUnknownCommand($text);
@@ -87,17 +89,15 @@ abstract class WebhookHandler
     protected function handleUnknownCommand(Stringable $text): void
     {
         if ($this->message?->chat()?->type() === Chat::TYPE_PRIVATE) {
-            $command = (string) $text->after('/')->before(' ')->before('@');
-
             if (config('telegraph.report_unknown_webhook_commands', config('telegraph.webhook.report_unknown_commands', true))) {
-                report(TelegramWebhookException::invalidCommand($command));
+                report(TelegramWebhookException::invalidCommand($this->parseCommand($text)[0]));
             }
 
             $this->chat->html(__('telegraph::errors.invalid_command'))->send();
         }
     }
 
-    private function handleMessage(): void
+    protected function handleMessage(): void
     {
         $this->extractMessageData();
 
@@ -107,7 +107,7 @@ abstract class WebhookHandler
 
         $text = Str::of($this->message?->text() ?? '');
 
-        if ($text->startsWith('/')) {
+        if ($text->startsWith($this->commandPrefixes())) {
             $this->handleCommand($text);
 
             return;
@@ -273,11 +273,10 @@ abstract class WebhookHandler
 
     protected function setupChat(): void
     {
-
-        if (isset($this->message)){
-            $telegramChat = $this->message?->chat() ?? $this->callbackQuery?->message()?->chat();
+        if (isset($this->message)) {
+            $telegramChat = $this->message->chat();
         } else {
-            $telegramChat = $this->callbackQuery?->message()?->chat();;
+            $telegramChat = $this->callbackQuery?->message()?->chat();
         }
 
         assert($telegramChat !== null);
@@ -294,10 +293,7 @@ abstract class WebhookHandler
             }
 
             if (config('telegraph.security.store_unknown_chats_in_db', false)) {
-                $this->chat->name = Str::of("")
-                    ->append("[", $telegramChat->type(), ']')
-                    ->append(" ", $telegramChat->title());
-                $this->chat->save();
+                $this->createChat($telegramChat, $this->chat);
             }
         }
     }
@@ -319,6 +315,48 @@ abstract class WebhookHandler
 
         report($throwable);
 
-        $this->reply(__('telegraph::errors.webhook_error_occurred'));
+        rescue(fn () => $this->reply(__('telegraph::errors.webhook_error_occurred')), report: false);
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function parseCommand(Stringable $text): array
+    {
+        $command = (string) $text->before('@')->before(' ');
+        $parameter = (string) $text->after('@')->after(' ');
+
+        $this->commandPrefixes()->each(function (string $value) use (&$command) {
+            $command = str($command)->after($value)->toString();
+        });
+
+        return [$command, $parameter];
+    }
+
+    /**
+     * @return Collection<int, string>
+     */
+    protected function commandPrefixes(): Collection
+    {
+        /** @var string[] $prefixes */
+        $prefixes = config('telegraph.commands.start_with', []);
+
+        return collect($prefixes)
+            ->push('/')
+            ->map(fn (string $prefix) => str($prefix)->trim()->toString())
+            ->unique();
+    }
+
+    protected function createChat(Chat $telegramChat, TelegraphChat $chat): void
+    {
+        $chat->name = $this->getChatName($telegramChat);
+        $chat->save();
+    }
+
+    protected function getChatName(Chat $chat): string
+    {
+        return Str::of("")
+            ->append("[", $chat->type(), ']')
+            ->append(" ", $chat->title());
     }
 }

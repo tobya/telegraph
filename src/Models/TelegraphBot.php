@@ -44,12 +44,15 @@ class TelegraphBot extends Model implements Storable
         'name',
     ];
 
+    /**
+     * @return TelegraphBotFactory
+     */
     protected static function newFactory(): Factory
     {
         return TelegraphBotFactory::new();
     }
 
-    public static function booted()
+    public static function booted(): void
     {
         self::created(function (TelegraphBot $bot) {
             if (empty($bot->name)) {
@@ -89,15 +92,18 @@ class TelegraphBot extends Model implements Storable
         return self::query()->where('token', $token)->sole();
     }
 
+    /**
+     * @return HasMany<TelegraphChat>
+     */
     public function chats(): HasMany
     {
         /** @phpstan-ignore-next-line */
         return $this->hasMany(config('telegraph.models.chat'), 'telegraph_bot_id');
     }
 
-    public function registerWebhook(): Telegraph
+    public function registerWebhook(bool $dropPendingUpdates = null, int $maxConnections = null, string $secretToken = null): Telegraph
     {
-        return TelegraphFacade::bot($this)->registerWebhook();
+        return TelegraphFacade::bot($this)->registerWebhook($dropPendingUpdates, $maxConnections, $secretToken);
     }
 
     public function unregisterWebhook(bool $dropPendingUpdates = false): Telegraph
