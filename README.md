@@ -1,3 +1,7 @@
+## NOT USED ANY LONGER
+# NOW USING defstudio/telegraph again
+
+
 ![Pest Laravel Expectations](https://banners.beyondco.de/Laravel%20Telegraph.png?theme=light&packageManager=composer+require&packageName=defstudio%2Ftelegraph&pattern=architect&style=style_1&description=Telegram+bots+made+easy&md=1&showWatermark=1&fontSize=100px&images=phone-outgoing)
 
 <a href="https://packagist.org/packages/defstudio/telegraph" target="_blank"><img style="display: inline-block; margin-top: 0.5em; margin-bottom: 0.5em" src="https://img.shields.io/packagist/v/defstudio/telegraph.svg?style=flat&cacheSeconds=3600" alt="Latest Version on Packagist"></a>
